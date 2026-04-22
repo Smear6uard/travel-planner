@@ -134,7 +134,7 @@ async def get_weather(destination: str, start_date: str = "", end_date: str = ""
         params: dict = {
             "latitude": lat,
             "longitude": lon,
-            "daily": "temperature_2m_max,temperature_2m_min,weathercode",
+            "daily": "temperature_2m_max,temperature_2m_min,weather_code",
             "timezone": "auto",
             "forecast_days": 16,
         }
@@ -145,7 +145,7 @@ async def get_weather(destination: str, start_date: str = "", end_date: str = ""
     dates = daily.get("time", [])
     maxes = daily.get("temperature_2m_max", [])
     mins = daily.get("temperature_2m_min", [])
-    codes = daily.get("weathercode", [])
+    codes = daily.get("weather_code", [])
 
     def wx_icon(code):
         if code is None: return "🌤️"

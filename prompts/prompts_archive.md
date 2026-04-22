@@ -203,6 +203,13 @@ Led to:
 
 ---
 
+**Prompt used with Claude Code:**
+> "now fix the remaining bugs and commit"
+
+**Purpose:** Fix the two remaining bugs: `mapInstance` not destroyed before re-initialization, and deprecated `weathercode` → `weather_code` Open-Meteo API field.
+
+---
+
 ## 3. Documentation Prompts
 
 ### 3.1 Prompt Archive

@@ -1810,7 +1810,7 @@
     const trip = trips.find(t=>t.id===id);
     if (!trip) return;
     rawResultText = trip.rawText||'';
-    mapInstance = null;
+    if (mapInstance) { mapInstance.remove(); mapInstance = null; }
     const panel = document.getElementById('result-panel');
     panel.classList.add('visible');
     document.getElementById('result-dot').classList.add('done');
@@ -1918,7 +1918,7 @@
     const label = document.getElementById('result-label');
 
     // Reset state
-    mapInstance = null;
+    if (mapInstance) { mapInstance.remove(); mapInstance = null; }
     document.getElementById('trip-container').style.display = 'none';
     document.getElementById('saved-trips-panel').style.display = 'none';
     document.getElementById('btn-save-trip').style.display = 'none';
