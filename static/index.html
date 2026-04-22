@@ -1562,16 +1562,18 @@
 
   // ── Build trip data model from streamed markdown ──
   function buildTripFromText(rawText, meta) {
-    const parts = rawText.split(/(?=^# )/m);
+    const parts = rawText.split(/(?=^#{1,2} )/m);
     const days = [];
     let dayCount = 0;
     for (const part of parts) {
-      if (!part.trim() || !part.startsWith('# ')) continue;
-      dayCount++;
+      if (!part.trim() || !part.match(/^#{1,2} /)) continue;
       const lines = part.split('\n');
-      const heading = lines[0].replace(/^# /, '').trim();
+      const heading = lines[0].replace(/^#{1,2} /, '').trim();
+      // Only treat lines that look like day headings as day cards
       const dayMatch = heading.match(/^(Day\s*\d+)[:\s·—\-]*/i);
-      const subtitle = dayMatch ? heading.slice(dayMatch[0].length).trim() : heading;
+      if (!dayMatch) continue;
+      dayCount++;
+      const subtitle = heading.slice(dayMatch[0].length).trim();
       const activities = [];
       let currentCat = 'Overview';
       for (const line of lines.slice(1)) {
@@ -1580,12 +1582,44 @@
         const li = line.match(/^[-*•] (.+)/);
         if (li) {
           const text = li[1].replace(/\*\*/g,'').replace(/\*/g,'').trim();
-          if (text.length > 2) activities.push({ id: 'act-'+Math.random().toString(36).slice(2,9), category: currentCat, text, cost: 0 });
+          if (text.length > 2) {
+            const costMatch = text.match(/\$(\d{1,6}(?:,\d{3})*(?:\.\d{1,2})?)/);
+            const cost = costMatch ? parseFloat(costMatch[1].replace(/,/g,'')) : 0;
+            activities.push({ id: 'act-'+Math.random().toString(36).slice(2,9), category: currentCat, text, cost });
+          }
         }
       }
       days.push({ id: 'day-'+dayCount, dayNum: dayCount, title: 'Day '+dayCount, subtitle, weather: null, activities });
     }
-    return { id: 'trip-'+Date.now(), meta, days, rawText };
+
+    // Extract a budget estimate from the LLM's budget/cost section or any grand-total line.
+    // Used as a fallback display when no per-activity costs have been entered yet.
+    let budgetEstimate = 0;
+    const budgetSectionMatch = rawText.match(/^#{1,3}[^#\n]*(?:budget|cost|expense|💰)[^\n]*/im);
+    if (budgetSectionMatch) {
+      const sectionStart = budgetSectionMatch.index + budgetSectionMatch[0].length;
+      const nextHeading = rawText.slice(sectionStart).search(/^#{1,3} /m);
+      const section = nextHeading === -1 ? rawText.slice(sectionStart) : rawText.slice(sectionStart, sectionStart + nextHeading);
+      // Prefer a "total" line; otherwise sum all dollar amounts in the section
+      const totalLine = section.split('\n').find(l => /total/i.test(l) && /\$[\d,]/.test(l));
+      if (totalLine) {
+        const m = totalLine.match(/\$([\d,]+)/);
+        if (m) budgetEstimate = parseFloat(m[1].replace(/,/g,''));
+      } else {
+        const amounts = [...section.matchAll(/\$([\d,]+)/g)].map(m => parseFloat(m[1].replace(/,/g,'')));
+        budgetEstimate = amounts.reduce((s,n) => s+n, 0);
+      }
+    }
+    if (!budgetEstimate) {
+      // Last-resort: scan whole text for a grand-total line
+      const totalLine = rawText.split('\n').reverse().find(l => /total/i.test(l) && /\$[\d,]/.test(l));
+      if (totalLine) {
+        const m = totalLine.match(/\$([\d,]+)/);
+        if (m) budgetEstimate = parseFloat(m[1].replace(/,/g,''));
+      }
+    }
+
+    return { id: 'trip-'+Date.now(), meta, days, rawText, budgetEstimate };
   }
 
   // ── Render full interactive trip UI ──
@@ -1595,16 +1629,22 @@
     document.getElementById('trip-container').style.display = '';
     document.getElementById('btn-save-trip').style.display = '';
     document.getElementById('btn-my-trips').style.display = '';
+    // Always reset to itinerary tab so the view is never left stuck on map
+    document.querySelectorAll('.trip-vtab').forEach((t, i) => t.classList.toggle('active', i === 0));
+    document.getElementById('tv-itinerary').style.display = '';
+    document.getElementById('tv-map').style.display = 'none';
 
     const fmtDate = d => d ? new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
     const dateRange = [fmtDate(data.meta.startDate), fmtDate(data.meta.endDate)].filter(Boolean).join(' → ');
     const metaLine = [dateRange, `${data.meta.travelers} traveler${data.meta.travelers!==1?'s':''}`, data.meta.budget].filter(Boolean).join(' · ');
 
-    document.getElementById('tv-itinerary').innerHTML =
-      `<div class="itin-banner" style="margin-bottom:20px">
+    const banner = `<div class="itin-banner" style="margin-bottom:20px">
         <div class="itin-banner-icon">✈️</div>
         <div><div class="itin-destination">${esc(data.meta.destination)}</div><div class="itin-meta">${metaLine}</div></div>
-      </div>` + data.days.map(renderDayCard).join('');
+      </div>`;
+    document.getElementById('tv-itinerary').innerHTML = data.days.length
+      ? banner + data.days.map(renderDayCard).join('')
+      : banner + `<div class="result-body" style="padding:0 4px">${renderMarkdown(data.rawText)}</div>`;
 
     updateBudgetTotal();
     fetchWeatherForTrip(data);
@@ -1637,7 +1677,7 @@
     return `<div class="activity-item" id="${act.id}">
       <span class="act-text" id="text-${act.id}">${esc(act.text)}</span>
       <div class="act-cost-wrap">$<input type="number" class="act-cost-input" value="${act.cost||0}" min="0" step="1"
-        onchange="updateCost('${dayId}','${act.id}',this.value)" placeholder="0"></div>
+        oninput="updateCost('${dayId}','${act.id}',this.value)" placeholder="0"></div>
       <div class="act-actions">
         <button class="act-btn" title="Edit" onclick="startEdit('${act.id}','${dayId}')">✏️</button>
         <button class="act-btn del" title="Delete" onclick="deleteActivity('${dayId}','${act.id}')">🗑️</button>
@@ -1713,9 +1753,10 @@
 
   function updateBudgetTotal() {
     if (!tripData) return;
-    const total = tripData.days.reduce((s,d)=>s+d.activities.reduce((ss,a)=>ss+(a.cost||0),0),0);
+    const tracked = tripData.days.reduce((s,d)=>s+d.activities.reduce((ss,a)=>ss+(a.cost||0),0),0);
+    const display = tracked || tripData.budgetEstimate || 0;
     const el = document.getElementById('budget-total-display');
-    if (el) el.textContent = '$'+total.toLocaleString();
+    if (el) el.textContent = '$'+display.toLocaleString();
   }
 
   // ── Trip view tabs ──

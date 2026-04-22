@@ -224,6 +224,13 @@ Led to:
 
 ---
 
+**Prompt used with Claude Code:**
+> "run server"
+
+**Purpose:** Start the FastAPI/uvicorn development server.
+
+---
+
 ## 3. Documentation Prompts
 
 ### 3.1 Prompt Archive
@@ -296,3 +303,22 @@ uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 # 4. Open browser at http://localhost:8000
 ```
+
+---
+
+## Session Prompts — 2026-04-22
+
+**Prompt:**
+am i wrong or the itinerary just breaks once completed?
+
+**Prompt:**
+estimated total keeps showing $0
+
+**Prompt:**
+you've logged every single prompt this session right? please do it and keep every prompt unchanged and accurate
+
+**Prompt:**
+and continue to log every prompt no exceptions. did you fix the $0?
+
+**Prompt:**
+when the itinerary finishes, it still displays "estimated total $0" fix this
