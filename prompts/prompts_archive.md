@@ -139,6 +139,70 @@ Led to:
 
 ---
 
+### 2.9 Encoding / Windows Compatibility Fix
+**Prompt used with Claude Code:**
+> "there is an encoding error in here right? and it wont work on windws?"
+
+**Purpose:** Identified that `open("static/index.html")` in the root route lacked encoding specification, which breaks on Windows (default cp1252). Fix replaced the manual file read with FastAPI's `FileResponse`.
+
+---
+
+**Prompt used with Claude Code:**
+> "isnt there a better way to fix this? doesnt fastapi handle this?"
+
+**Purpose:** Switched from `open()` with `encoding="utf-8"` to `FileResponse("static/index.html")`, which is the idiomatic FastAPI approach — handles encoding, headers, and caching automatically.
+
+---
+
+**Prompt used with Claude Code:**
+> "yes"
+
+**Purpose:** Confirmed the `FileResponse` fix. Updated import to remove unused `HTMLResponse` and add `FileResponse`.
+
+---
+
+**Prompt used with Claude Code:**
+> "update the prompt log to refelect everything i said unchanged. exactly how it is. and every prompt i make now add it to the prompt exactly as is"
+
+**Purpose:** Establish ongoing requirement to log every user prompt verbatim and in full to `prompts/prompts_archive.md`.
+
+---
+
+**Prompt used with Claude Code:**
+> "you forgot the last prompt i made."
+
+**Purpose:** Flagged that the "update the prompt log" prompt was missing from the archive.
+
+---
+
+**Prompt used with Claude Code:**
+> "i just said to update the prompt log for EVERY SINGLE PROMPT I MAKE"
+
+**Purpose:** Reinforced that every prompt, including meta/conversational ones, must be logged verbatim immediately.
+
+---
+
+**Prompt used with Claude Code:**
+> "can i use react for the frontend. It will give it more organization and a modern framework."
+
+**Purpose:** Evaluating whether to migrate the frontend from a single `index.html` to a React app.
+
+---
+
+**Prompt used with Claude Code:**
+> "No not yet. has everything been fixed (cross-platform problems, bugs, etc)"
+
+**Purpose:** Audit the project for remaining cross-platform issues or bugs before further development.
+
+---
+
+**Prompt used with Claude Code:**
+> "commit the cross-platform fix and add what you did in the message keep it short though"
+
+**Purpose:** Commit the `FileResponse` cross-platform fix with a brief descriptive commit message.
+
+---
+
 ## 3. Documentation Prompts
 
 ### 3.1 Prompt Archive

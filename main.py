@@ -5,7 +5,7 @@ from typing import List, Optional
 import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -168,10 +168,9 @@ async def get_weather(destination: str, start_date: str = "", end_date: str = ""
     return {"weather": result, "lat": lat, "lon": lon}
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 async def root():
-    with open("static/index.html") as f:
-        return f.read()
+    return FileResponse("static/index.html")
 
 
 @app.post("/api/chat/stream")
