@@ -210,6 +210,20 @@ Led to:
 
 ---
 
+**Prompt used with Claude Code:**
+> "explain to me what was fixed and what the problem was"
+
+**Purpose:** Understand the two bugs that were fixed — the Open-Meteo API deprecation and the Leaflet map memory leak.
+
+---
+
+**Prompt used with Claude Code:**
+> "make sure everything is good, stage commit and push. do not push anything that should not be pushed"
+
+**Purpose:** Final review, stage all safe files, commit, and push to remote.
+
+---
+
 ## 3. Documentation Prompts
 
 ### 3.1 Prompt Archive
