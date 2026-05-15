@@ -308,6 +308,33 @@ uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ## Session Prompts — 2026-04-22
 
+## Session Prompts — 2026-05-14
+
+**Prompt:**
+lets continue this project, do not forget to log every single prompt no exception including this one. do not forget. look over the project and readme, then the planner entry, i want to start phase 5, i also need to map function more. can we work on the map first? its very barebones
+
+**Prompt:**
+can you fix the search settings? if i type chi, i want the most recommended cities to come up or countries... ofc being chicago one of them.. also, keep everything in english, if i type tokyo the drop down is in japanese
+
+**Prompt:**
+are you sorting results by most recommended or no? like if i search tok, tokyo should be top result
+
+**Prompt:**
+what is the most common approach? that popular websites use
+
+**Prompt:**
+ok can we have a little button next to the calender button for today in departure data
+
+**Prompt:**
+can you make the map actually relevant? like if i put chicago, and it gives me a bunch of areas, can you give me those exact locations mapped, is there a better map service we can use? etc
+
+**Prompt:**
+what afre the main project files/files
+
+---
+
+## Session Prompts — 2026-04-22
+
 **Prompt:**
 am i wrong or the itinerary just breaks once completed?
 
@@ -322,3 +349,13 @@ and continue to log every prompt no exceptions. did you fix the $0?
 
 **Prompt:**
 when the itinerary finishes, it still displays "estimated total $0" fix this
+
+**Prompt:**
+this works cross-platform right? windows, max, linux
+
+---
+
+## Session Prompts — 2026-05-05
+
+**Prompt:**
+in thew parent folder i have an html and mini project planner, the only project missing is mine for the planner pdf. could you make another html/pdf whatever for me in the parent folder to copy and paste and put in the mini project planner pdf. look over my travel planner and logs etc. do a deep dive and follow the structure of everyone elses project planner in the pdf

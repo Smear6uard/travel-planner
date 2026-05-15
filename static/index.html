@@ -1094,10 +1094,49 @@
 
     /* Map */
     #trip-map {
-      height: 460px;
+      height: 540px;
       width: 100%;
-      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
+
+    /* Map day filter bar */
+    .map-day-filter {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--neutral-50);
+      border-bottom: 1px solid var(--neutral-200);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+    }
+    .map-day-filter::-webkit-scrollbar { display: none; }
+    .map-day-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 13px;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: 100px;
+      font-size: .76rem;
+      font-weight: 600;
+      color: var(--neutral-600);
+      background: var(--white);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .15s;
+      font-family: var(--font);
+      flex-shrink: 0;
+    }
+    .map-day-btn:hover { border-color: var(--rose-300); color: var(--rose-600); }
+    .map-day-btn.active {
+      background: linear-gradient(135deg, var(--rose-500), var(--rose-700));
+      border-color: transparent;
+      color: white;
+    }
+
+    /* Leaflet popup overrides */
+    .leaflet-popup-content { margin: 12px 14px; }
+    .leaflet-popup-content-wrapper { border-radius: 10px !important; box-shadow: 0 6px 24px rgba(0,0,0,.14) !important; }
+    .leaflet-control-layers { border-radius: 8px !important; border: 1px solid var(--neutral-200) !important; font-family: var(--font) !important; font-size: .78rem !important; }
 
     /* Budget bar */
     .budget-bar {
@@ -1260,7 +1299,26 @@
           <!-- Dates -->
           <div class="form-group">
             <label>Departure Date</label>
-            <input type="date" id="start-date" />
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="date" id="start-date" style="flex:1" />
+              <button type="button" onclick="setTodayDeparture()" style="
+                padding:6px 11px;
+                border:1.5px solid var(--neutral-200);
+                border-radius:var(--radius-sm);
+                background:var(--neutral-50);
+                color:var(--neutral-600);
+                font-size:.75rem;
+                font-weight:600;
+                cursor:pointer;
+                white-space:nowrap;
+                font-family:var(--font);
+                transition:all .15s;
+                flex-shrink:0;
+              " onmouseover="this.style.borderColor='var(--rose-400)';this.style.color='var(--rose-600)';this.style.background='var(--rose-50)'"
+                 onmouseout="this.style.borderColor='var(--neutral-200)';this.style.color='var(--neutral-600)';this.style.background='var(--neutral-50)'">
+                Today
+              </button>
+            </div>
           </div>
           <div class="form-group">
             <label>Return Date</label>
@@ -1346,6 +1404,7 @@
         </div>
         <div id="tv-itinerary" class="trip-view-panel"></div>
         <div id="tv-map" class="trip-view-panel" style="display:none">
+          <div class="map-day-filter" id="map-day-filter"></div>
           <div id="trip-map"></div>
         </div>
         <div class="budget-bar">
@@ -1525,6 +1584,12 @@
     input.value = val;
   }
 
+  // ── Today button ──
+  function setTodayDeparture() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').value = today;
+  }
+
   // ── Budget Selection ──
   function selectBudget(el, val) {
     document.querySelectorAll('.budget-pill').forEach(p => p.classList.remove('selected'));
@@ -1555,6 +1620,12 @@
   let tripData = null;
   let mapInstance = null;
 
+  // ── Map day color palette ──
+  const DAY_COLORS = [
+    '#22c55e','#3b82f6','#f59e0b','#ec4899','#8b5cf6',
+    '#ef4444','#06b6d4','#84cc16','#f97316','#6366f1'
+  ];
+
   // ── HTML Escape ──
   function esc(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1579,7 +1650,7 @@
       for (const line of lines.slice(1)) {
         const h = line.match(/^#{1,3} (.+)/);
         if (h) { currentCat = h[1].trim(); continue; }
-        const li = line.match(/^[-*•] (.+)/);
+        const li = line.match(/^(?:[-*•]|\d+[.)]) (.+)/);
         if (li) {
           const text = li[1].replace(/\*\*/g,'').replace(/\*/g,'').trim();
           if (text.length > 2) {
@@ -1773,45 +1844,344 @@
 
   // ── Weather (Open-Meteo, free) ──
   async function fetchWeatherForTrip(data) {
-    if (!data.meta.startDate || !data.meta.endDate) return;
     try {
-      const r = await fetch(`/api/weather?destination=${encodeURIComponent(data.meta.destination)}&start_date=${data.meta.startDate}&end_date=${data.meta.endDate}`);
-      const { weather, lat, lon } = await r.json();
-      if (weather?.length) {
-        data.days.forEach((day, i) => {
-          // Match by date offset from startDate, or fall back to index
-          let w = null;
-          if (data.meta.startDate) {
-            const tripDate = new Date(data.meta.startDate);
-            tripDate.setDate(tripDate.getDate() + i);
-            const dateStr = tripDate.toISOString().split('T')[0];
-            w = weather.find(wx => wx.date === dateStr) || weather[i];
-          } else {
-            w = weather[i];
-          }
-          if (!w) return;
-          day.weather = w;
-          const badge = document.getElementById('wx-'+day.id);
-          if (badge) { badge.style.opacity='1'; badge.textContent=`${w.icon} ${w.max!==null?w.max+'°C':''}`; }
-        });
+      let lat, lon;
+      if (data.meta.startDate && data.meta.endDate) {
+        const r = await fetch(`/api/weather?destination=${encodeURIComponent(data.meta.destination)}&start_date=${data.meta.startDate}&end_date=${data.meta.endDate}`);
+        const result = await r.json();
+        lat = result.lat; lon = result.lon;
+        if (result.weather?.length) {
+          data.days.forEach((day, i) => {
+            let w = null;
+            if (data.meta.startDate) {
+              const tripDate = new Date(data.meta.startDate);
+              tripDate.setDate(tripDate.getDate() + i);
+              const dateStr = tripDate.toISOString().split('T')[0];
+              w = result.weather.find(wx => wx.date === dateStr) || result.weather[i];
+            } else {
+              w = result.weather[i];
+            }
+            if (!w) return;
+            day.weather = w;
+            const badge = document.getElementById('wx-'+day.id);
+            if (badge) { badge.style.opacity='1'; badge.textContent=`${w.icon} ${w.max!==null?w.max+'°C':''}`; }
+          });
+        }
+      } else {
+        const r = await fetch(`/api/geocode?q=${encodeURIComponent(data.meta.destination)}`);
+        const result = await r.json();
+        lat = result.lat; lon = result.lon;
       }
-      if (lat && lon && !mapInstance) initMapWithCoords(lat, lon, data.meta.destination);
-    } catch(e) { console.warn('Weather fetch failed', e); }
+      if (lat && lon && !mapInstance) initEnhancedMap(lat, lon, data.meta.destination, data);
+    } catch(e) { console.warn('Weather/map init failed', e); }
   }
 
-  // ── Map (Leaflet + OSM) ──
-  function initMapWithCoords(lat, lon, destination) {
+  // ── Day marker icon (large, for placeholder while geocoding) ──
+  function makeDayIcon(dayNum, color) {
+    return L.divIcon({
+      html: `<div style="width:34px;height:34px;background:${color};border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;box-shadow:0 3px 12px rgba(0,0,0,.28);font-family:-apple-system,sans-serif">${dayNum}</div>`,
+      className: '',
+      iconSize: [34,34],
+      iconAnchor: [17,17],
+      popupAnchor: [0,-20]
+    });
+  }
+
+  // ── Activity marker icon (smaller, numbered per-place) ──
+  function makeActivityIcon(num, color) {
+    return L.divIcon({
+      html: `<div style="width:26px;height:26px;background:${color};border:2.5px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;box-shadow:0 2px 8px rgba(0,0,0,.25);font-family:-apple-system,sans-serif">${num}</div>`,
+      className: '',
+      iconSize: [26,26],
+      iconAnchor: [13,13],
+      popupAnchor: [0,-15]
+    });
+  }
+
+  // ── Circular offset for day placeholder markers ──
+  function dayOffset(centerLat, centerLon, idx, total) {
+    const r = 0.018;
+    const angle = ((idx / Math.max(total, 1)) * 2 * Math.PI) - Math.PI / 2;
+    return [centerLat + r * Math.cos(angle), centerLon + r * Math.sin(angle)];
+  }
+
+  // ── Extract named places from a single activity text ──
+  // Words that should never be the start of a geocodable place name
+  const _SKIP_PLACE_WORDS = new Set([
+    'day','the','a','an','your','this','our','its','take','make','head','spend',
+    'enjoy','start','end','begin','continue','return','have','get','go','come',
+    'walk','ride','drive','fly','arrive','depart','visit','explore','tour','see',
+    'morning','afternoon','evening','night','breakfast','lunch','dinner','today',
+    'tonight','after','before','during','free','full','short','long','early','late',
+  ]);
+
+  function extractPlaceFromActivity(text) {
+    // Helper: trim a raw capture down to just the place name words
+    function clean(raw) {
+      if (!raw) return null;
+      // Stop at first lowercase-started word that isn't "of / the / at / de / la / le"
+      const words = raw.trim().split(/\s+/);
+      const kept = [];
+      for (const w of words) {
+        const low = w.toLowerCase().replace(/[^a-z]/g,'');
+        if (kept.length > 0 && /^[a-z]/.test(w) && !['of','the','at','de','la','le','el','du'].includes(low)) break;
+        kept.push(w);
+      }
+      const name = kept.join(' ').replace(/[,;.!?]+$/, '').trim();
+      return name.length > 3 && name.length < 60 && !_SKIP_PLACE_WORDS.has(name.split(' ')[0].toLowerCase()) ? name : null;
+    }
+
+    // Pattern 1 — explicit landmark type suffix (highest confidence)
+    let m = text.match(/([A-Z][A-Za-z\-'&]+(?:\s+[A-Za-z\-'&]+){0,5}?\s+(?:Museum|Gallery|Park|Temple|Shrine|Pagoda|Cathedral|Church|Mosque|Palace|Castle|Tower|Bridge|Market|Square|Garden|Stadium|Arena|Theater|Theatre|Hotel|Hostel|Resort|Spa|Zoo|Aquarium|Memorial|Monument|Beach|Harbor|Harbour|Bay|Island|Fort|Mall|Center|Centre|Ruins|Basilica|Abbey|Monastery|Library|University|Campus|Quarter|District|Pier|Wharf|Boardwalk|Falls|Canyon|Glacier|Observatory|Planetarium|Botanical|Waterfall|Building|Hall|House|Villa|Shrine|Crossing|Street|Avenue|Boulevard|Lane|Alley|Row))/);
+    if (m) { const n = clean(m[1]); if (n) return n; }
+
+    // Pattern 2 — "Visit/Explore/etc. [the] [Place Name]"
+    m = text.match(/(?:visit|explore|tour|see|check out|head to|walk to|stroll through|discover|experience|arrive at|stop at|pass through)\s+(?:the\s+)?([A-Z][A-Za-z\-'&]+(?:\s+(?:of\s+|the\s+)?[A-Z][A-Za-z\-'&]+){0,4})/i);
+    if (m) { const n = clean(m[1]); if (n) return n; }
+
+    // Pattern 3 — "Check in / stay at [Hotel]"
+    m = text.match(/(?:check.?in|stay|overnight)\s+(?:at\s+)?(?:the\s+)?([A-Z][A-Za-z\-'&]+(?:\s+[A-Z][A-Za-z\-'&]+){0,4})/i);
+    if (m) { const n = clean(m[1]); if (n) return n; }
+
+    // Pattern 4 — any 2–4 consecutive title-case proper nouns (fallback)
+    m = text.match(/\b([A-Z][a-z]{1,}(?:\s+[A-Z][a-z]{1,}){1,3})\b/);
+    if (m) { const n = clean(m[1]); if (n) return n; }
+
+    return null;
+  }
+
+  // ── Extract up to N unique places from a day's activities ──
+  function extractPlacesFromDay(activities, maxPlaces = 4) {
+    const results = [];
+    const seen = new Set();
+    for (const act of activities) {
+      const place = extractPlaceFromActivity(act.text);
+      if (place && !seen.has(place.toLowerCase())) {
+        seen.add(place.toLowerCase());
+        results.push({ place, actText: act.text });
+      }
+      if (results.length >= maxPlaces) break;
+    }
+    return results;
+  }
+
+  // ── Popup for a geocoded activity marker ──
+  function buildActivityPopupHtml(dayTitle, color, placeName, actText) {
+    const preview = actText.length > 90 ? actText.substring(0, 90) + '…' : actText;
+    return `<div style="min-width:170px;max-width:230px;font-family:-apple-system,sans-serif">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+        <div style="width:14px;height:14px;background:${color};border-radius:50%;flex-shrink:0"></div>
+        <strong style="font-size:.88rem;color:#111">${esc(dayTitle)}</strong>
+      </div>
+      <p style="font-size:.8rem;font-weight:600;color:#22c55e;margin:0 0 4px">📍 ${esc(placeName)}</p>
+      <p style="font-size:.76rem;color:#6b7280;margin:0;line-height:1.45">${esc(preview)}</p>
+    </div>`;
+  }
+
+  // ── Day summary popup (used for placeholder markers) ──
+  function buildDayPopupHtml(dayTitle, subtitle, activities, color) {
+    const acts = activities.slice(0, 5).map(a => {
+      const txt = a.text.length > 72 ? a.text.substring(0,72)+'…' : a.text;
+      return `<li style="font-size:.78rem;line-height:1.45;margin:3px 0;color:#374151">${esc(txt)}</li>`;
+    }).join('');
+    const more = activities.length > 5 ? `<li style="font-size:.73rem;color:#9ca3af">+${activities.length-5} more…</li>` : '';
+    return `<div style="min-width:190px;max-width:240px;font-family:-apple-system,sans-serif">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:16px;height:16px;background:${color};border-radius:50%;flex-shrink:0"></div>
+        <strong style="font-size:.92rem;color:#111">${esc(dayTitle)}</strong>
+      </div>
+      ${subtitle ? `<p style="font-size:.78rem;color:#6b7280;margin:0 0 8px;padding-bottom:7px;border-bottom:1px solid #f3f4f6">${esc(subtitle)}</p>` : ''}
+      <ul style="list-style:disc;margin:0;padding-left:14px">${acts}${more}</ul>
+    </div>`;
+  }
+
+  // ── Render day filter buttons in the map bar ──
+  function renderMapDayFilter(markerData) {
+    const bar = document.getElementById('map-day-filter');
+    if (!bar) return;
+    if (!markerData.length) { bar.style.display = 'none'; return; }
+    bar.innerHTML = '';
+
+    const allBtn = document.createElement('button');
+    allBtn.className = 'map-day-btn active';
+    allBtn.textContent = 'All Days';
+    allBtn.dataset.day = 'all';
+    bar.appendChild(allBtn);
+
+    markerData.forEach(m => {
+      const btn = document.createElement('button');
+      btn.className = 'map-day-btn';
+      btn.dataset.day = m.dayId;
+      btn.innerHTML = `<span style="display:inline-block;width:9px;height:9px;background:${m.color};border-radius:50%;margin-right:5px;vertical-align:middle;flex-shrink:0"></span>${esc(m.dayTitle)}`;
+      bar.appendChild(btn);
+    });
+
+    bar.addEventListener('click', e => {
+      const btn = e.target.closest('.map-day-btn');
+      if (!btn || !mapInstance) return;
+      bar.querySelectorAll('.map-day-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const dayId = btn.dataset.day;
+
+      if (dayId === 'all') {
+        markerData.forEach(m => { if (!mapInstance.hasLayer(m.layerGroup)) m.layerGroup.addTo(mapInstance); });
+        const pts = markerData.flatMap(m => m.geocodedPoints.length ? m.geocodedPoints : [m.latlng]);
+        if (pts.length > 1) mapInstance.fitBounds(pts, {padding:[48,48], maxZoom:15});
+        else if (pts.length === 1) mapInstance.setView(pts[0], 14);
+      } else {
+        const target = markerData.find(m => m.dayId === dayId);
+        if (!target) return;
+        markerData.forEach(m => {
+          if (m.dayId === dayId) { if (!mapInstance.hasLayer(m.layerGroup)) m.layerGroup.addTo(mapInstance); }
+          else { if (mapInstance.hasLayer(m.layerGroup)) mapInstance.removeLayer(m.layerGroup); }
+        });
+        const pts = target.geocodedPoints.length ? target.geocodedPoints : [target.latlng];
+        if (pts.length > 1) mapInstance.fitBounds(pts, {padding:[60,60], maxZoom:15});
+        else mapInstance.setView(pts[0], 15);
+        if (target.firstMarker) target.firstMarker.openPopup();
+      }
+    });
+  }
+
+  // ── Geocode actual activity places and replace placeholder markers ──
+  async function geocodeActivityPlaces(markerData, destination, centerLat, centerLon) {
+    const bar = document.getElementById('map-day-filter');
+    // Loading hint
+    let hint = null;
+    if (bar) {
+      hint = document.createElement('span');
+      hint.style.cssText = 'font-size:.71rem;color:var(--neutral-400);margin-left:auto;align-self:center;white-space:nowrap;flex-shrink:0;padding-right:4px';
+      hint.textContent = '⟳ Mapping locations…';
+      bar.appendChild(hint);
+    }
+
+    const allRealPoints = [];
+
+    for (const m of markerData) {
+      const candidates = extractPlacesFromDay(m.activities, 2);
+      const dayPoints = [];
+
+      for (const { place, actText } of candidates) {
+        try {
+          const q = `${place}, ${destination}`;
+          const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+          const { lat, lon } = await r.json();
+          if (lat && lon) {
+            // Sanity check: must be within ~220 km of destination center
+            const dist = Math.sqrt(Math.pow(lat - centerLat, 2) + Math.pow(lon - centerLon, 2));
+            if (dist < 2.0) {
+              dayPoints.push({ lat, lon, place, actText });
+            }
+          }
+        } catch (_) {}
+        await new Promise(res => setTimeout(res, 1100));
+      }
+
+      if (dayPoints.length > 0) {
+        // Replace placeholder marker with real activity markers
+        m.layerGroup.clearLayers();
+        m.geocodedPoints = dayPoints.map(p => [p.lat, p.lon]);
+
+        dayPoints.forEach((pt, i) => {
+          const icon = makeActivityIcon(i + 1, m.color);
+          const popup = buildActivityPopupHtml(m.dayTitle, m.color, pt.place, pt.actText);
+          const marker = L.marker([pt.lat, pt.lon], { icon }).bindPopup(popup).addTo(m.layerGroup);
+          if (i === 0) m.firstMarker = marker;
+        });
+
+        // Intra-day route line connecting this day's places
+        if (dayPoints.length > 1) {
+          L.polyline(dayPoints.map(p => [p.lat, p.lon]), {
+            color: m.color, weight: 2.5, opacity: 0.65, dashArray: '5,7'
+          }).addTo(m.layerGroup);
+        }
+
+        // Update inter-day route with first geocoded point of each day
+        m.latlng = [dayPoints[0].lat, dayPoints[0].lon];
+        allRealPoints.push(...m.geocodedPoints);
+
+        if (mapInstance?._routeLine) {
+          mapInstance._routeLine.setLatLngs(markerData.map(md => md.latlng));
+        }
+      }
+    }
+
+    // Remove loading hint
+    hint?.remove();
+
+    // Fit map to all real points and notify user
+    if (allRealPoints.length > 0) {
+      mapInstance.fitBounds([[centerLat, centerLon], ...allRealPoints], {
+        padding: [48, 48], maxZoom: 15
+      });
+      showToast(`📍 ${allRealPoints.length} location${allRealPoints.length !== 1 ? 's' : ''} mapped`);
+    } else {
+      showToast('⚠️ Could not find specific locations — check the itinerary text');
+    }
+  }
+
+  // ── Enhanced Map (Leaflet + CartoDB + real activity geocoding) ──
+  function initEnhancedMap(lat, lon, destination, tripData) {
     const div = document.getElementById('trip-map');
     if (!div || mapInstance) return;
-    mapInstance = L.map(div).setView([lat, lon], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom:18
-    }).addTo(mapInstance);
-    const icon = L.divIcon({
-      html:`<div style="width:22px;height:22px;background:var(--rose-500);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>`,
-      className:'', iconSize:[22,22], iconAnchor:[11,22], popupAnchor:[0,-22]
+
+    mapInstance = L.map(div, { zoomControl: true }).setView([lat, lon], 13);
+
+    // Esri World Street Map — English labels at all zoom levels
+    const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; <a href="https://www.esri.com/">Esri</a>, &copy; OpenStreetMap contributors',
+      maxZoom: 19
     });
-    L.marker([lat,lon],{icon}).addTo(mapInstance).bindPopup(`<strong>${esc(destination)}</strong>`).openPopup();
+    // CartoDB Light — clean minimal look (local-language labels)
+    const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd', maxZoom: 20
+    });
+    esriStreet.addTo(mapInstance);
+    L.control.layers({'🗺 Street (EN)': esriStreet, '◻ Light': cartoLight}, {}, {position:'topright', collapsed:false}).addTo(mapInstance);
+
+    // Destination center pin
+    const centerIcon = L.divIcon({
+      html: `<div style="width:14px;height:14px;background:white;border:3px solid #22c55e;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>`,
+      className: '', iconSize:[14,14], iconAnchor:[7,7]
+    });
+    L.marker([lat, lon], {icon: centerIcon}).addTo(mapInstance)
+      .bindPopup(`<div style="font-family:-apple-system,sans-serif"><strong style="font-size:.9rem">${esc(destination)}</strong><br><span style="font-size:.75rem;color:#9ca3af">Trip destination</span></div>`);
+
+    // Build per-day placeholder markers (shown while geocoding runs)
+    const days = tripData?.days || [];
+    const markerData = days.map((day, idx) => {
+      const color = DAY_COLORS[idx % DAY_COLORS.length];
+      const latlng = days.length === 1 ? [lat + 0.005, lon + 0.005] : dayOffset(lat, lon, idx, days.length);
+      const group = L.layerGroup().addTo(mapInstance);
+      const icon = makeDayIcon(day.dayNum, color);
+      const popupHtml = buildDayPopupHtml(day.title, day.subtitle, day.activities, color);
+      const marker = L.marker(latlng, {icon}).bindPopup(popupHtml).addTo(group);
+      return {
+        dayId: day.id, dayNum: day.dayNum, dayTitle: day.title,
+        subtitle: day.subtitle, color, latlng, marker, firstMarker: marker,
+        layerGroup: group, geocodedPoints: [], activities: day.activities
+      };
+    });
+
+    // Inter-day route polyline (connects first point of each day)
+    if (markerData.length > 1) {
+      mapInstance._routeLine = L.polyline(markerData.map(m => m.latlng), {
+        color: '#94a3b8', weight: 1.5, opacity: 0.4, dashArray: '6,10'
+      }).addTo(mapInstance);
+    }
+
+    // Fit placeholder markers into view
+    const allPts = [[lat, lon], ...markerData.map(m => m.latlng)];
+    if (allPts.length > 1) mapInstance.fitBounds(allPts, {padding:[48,48], maxZoom:14});
+
+    // Day filter bar
+    renderMapDayFilter(markerData);
+
+    // Async: geocode real activity places and replace placeholder markers
+    if (days.length > 0) {
+      geocodeActivityPlaces(markerData, destination, lat, lon).catch(e => console.warn('Map geocoding error:', e));
+    }
   }
 
   // ── Save / Load Trips ──

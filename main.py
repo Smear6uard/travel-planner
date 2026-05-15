@@ -57,40 +57,104 @@ class ManualPlanRequest(BaseModel):
     special_requests: Optional[str] = ""
 
 
+# Top travel cities — matched by lowercase name to boost them above generic results
+_POPULAR_CITIES = {
+    "tokyo", "paris", "london", "new york", "dubai", "singapore", "istanbul",
+    "bangkok", "barcelona", "amsterdam", "rome", "vienna", "berlin", "madrid",
+    "sydney", "toronto", "los angeles", "chicago", "miami", "las vegas",
+    "san francisco", "new orleans", "washington", "boston", "seattle",
+    "hong kong", "seoul", "beijing", "shanghai", "kyoto", "osaka", "taipei",
+    "kuala lumpur", "bali", "phuket", "cancun", "rio de janeiro", "havana",
+    "buenos aires", "sao paulo", "mexico city", "bogota", "lima", "santiago",
+    "cairo", "marrakech", "casablanca", "nairobi", "cape town", "johannesburg",
+    "prague", "budapest", "lisbon", "brussels", "zurich", "geneva", "venice",
+    "florence", "milan", "naples", "athens", "santorini", "dubrovnik", "split",
+    "moscow", "st. petersburg", "mumbai", "delhi", "kolkata", "bangalore",
+    "reykjavik", "stockholm", "oslo", "copenhagen", "helsinki", "edinburgh",
+    "dublin", "glasgow", "manila", "jakarta", "hanoi", "ho chi minh city",
+    "yangon", "colombo", "kathmandu", "muscat", "doha", "abu dhabi", "riyadh",
+    "seville", "porto", "montreal", "vancouver", "auckland", "melbourne",
+    "brisbane", "perth", "denver", "phoenix", "dallas", "houston", "atlanta",
+    "portland", "nashville", "austin", "new delhi", "maldives", "zanzibar",
+    "accra", "lagos", "addis ababa", "kigali", "dar es salaam", "kampala",
+}
+
+
+def _photon_rank(feature: dict, q_lower: str) -> int:
+    props = feature.get("properties", {})
+    name = props.get("name", "").lower()
+    osm_value = props.get("osm_value", "")
+    # Tier 0 — well-known travel city that prefix-matches the query
+    if name in _POPULAR_CITIES and name.startswith(q_lower):
+        return 0
+    # Tier 1 — cities and capitals
+    if osm_value in {"city", "capital", "municipality"}:
+        return 1
+    # Tier 2 — countries (good travel destinations but less specific)
+    if osm_value == "country":
+        return 2
+    # Tier 3 — provinces, states, regions
+    if osm_value in {"province", "state", "administrative", "county", "region",
+                     "district", "federal_state", "department", "borough"}:
+        return 3
+    return 4
+
+
 @app.get("/api/suggestions")
 async def get_suggestions(q: str = ""):
     if len(q.strip()) < 2:
         return {"suggestions": []}
 
-    async with httpx.AsyncClient(timeout=8.0) as client:
-        response = await client.get(
-            "https://nominatim.openstreetmap.org/search",
-            params={"q": q, "format": "json", "limit": 8, "addressdetails": 1},
-            headers={"User-Agent": "AtlasTravelPlanner/1.0 (csc394@depaul.edu)"},
-        )
-        data = response.json()
+    # Photon is built for autocomplete and always returns English with lang=en
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            response = await client.get(
+                "https://photon.komoot.io/api/",
+                params={"q": q, "lang": "en", "limit": 20},
+                headers={"User-Agent": "AtlasTravelPlanner/1.0"},
+            )
+            features = response.json().get("features", [])
+    except Exception:
+        features = []
+
+    ALLOWED_VALUES = {
+        "city", "town", "village", "country", "municipality", "borough",
+        "administrative", "capital", "province", "state", "county",
+        "region", "district", "federal_state", "department",
+    }
+
+    q_lower = q.strip().lower()
+    # Stable sort preserves Photon's relevance order within each tier
+    features.sort(key=lambda f: _photon_rank(f, q_lower))
 
     suggestions = []
     seen: set = set()
-    for item in data:
-        addr = item.get("address", {})
-        city = (
-            addr.get("city")
-            or addr.get("town")
-            or addr.get("village")
-            or addr.get("municipality")
-            or addr.get("county")
-            or item.get("name", "")
-        )
-        state = addr.get("state", "")
-        country = addr.get("country", "")
-        if not city or not country:
+    for feature in features:
+        props = feature.get("properties", {})
+        osm_key = props.get("osm_key", "")
+        osm_value = props.get("osm_value", "")
+
+        if osm_key not in ("place", "boundary"):
             continue
-        parts = [city]
-        if state and state != city:
-            parts.append(state)
-        parts.append(country)
-        label = ", ".join(parts)
+        if osm_value not in ALLOWED_VALUES:
+            continue
+
+        name = props.get("name", "")
+        state = props.get("state", "")
+        country = props.get("country", "")
+        if not name or not country:
+            continue
+
+        # Avoid "China, China" when the place name is the country name
+        if name == country:
+            label = name
+        else:
+            parts = [name]
+            if state and state != name and state != country:
+                parts.append(state)
+            parts.append(country)
+            label = ", ".join(parts)
+
         if label not in seen:
             seen.add(label)
             suggestions.append(label)
