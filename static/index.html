@@ -54,10 +54,10 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(255,255,255,.85);
+      background: rgba(187,230,200,.98);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--rose-100);
+      border-bottom: 1px solid var(--rose-200);
       padding: 0 32px;
       height: 64px;
       display: flex;
@@ -789,6 +789,117 @@
     }
     footer strong { color: var(--rose-600); }
 
+    /* ── Dark Mode ── */
+    body.dark {
+      --rose-50:  #0d1f12;
+      --rose-100: #122819;
+      --rose-200: #1a3824;
+      --neutral-50:  #181818;
+      --neutral-100: #202020;
+      --neutral-200: #2a2a2a;
+      --neutral-300: #363636;
+      --neutral-400: #707070;
+      --neutral-600: #b0b0b8;
+      --neutral-700: #d0d0d8;
+      --neutral-800: #e4e4e7;
+      --neutral-900: #f0f0f2;
+      --white: #1e1e1e;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.4);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.4);
+      --shadow-lg: 0 10px 40px rgba(0,0,0,.5);
+      background: #121212;
+      color: #f0f0f2;
+    }
+    body.dark nav {
+      background: rgba(18,18,18,.97) !important;
+      border-bottom-color: var(--rose-200);
+    }
+    body.dark .hero {
+      background: linear-gradient(150deg, #0d1f12 0%, #141414 55%, #0d1f12 100%);
+      border-bottom-color: var(--rose-200);
+    }
+    body.dark .hero::before { display: none; }
+    body.dark .bg-fx { background: #121212; }
+    body.dark .blob { opacity: .18; }
+    body.dark .card {
+      background: #1e1e1e;
+      border-color: var(--neutral-200);
+    }
+    body.dark .card-header { border-bottom-color: var(--neutral-200); }
+    body.dark .form-group input,
+    body.dark .form-group textarea,
+    body.dark .form-group select {
+      background: #252525;
+      border-color: var(--neutral-300);
+      color: var(--neutral-900);
+    }
+    body.dark .stepper { border-color: var(--neutral-300); }
+    body.dark .stepper button { background: #2a2a2a; color: var(--neutral-700); }
+    body.dark .stepper input { background: #1e1e1e; color: var(--neutral-900); }
+    body.dark .budget-pills .budget-pill { background: #252525; border-color: var(--neutral-300); color: var(--neutral-700); }
+    body.dark .budget-pill.selected { background: linear-gradient(135deg, var(--rose-500), var(--rose-700)); color: #fff; border-color: transparent; }
+    body.dark .interest-tag label { background: #252525; border-color: var(--neutral-300); color: var(--neutral-700); }
+    body.dark .interest-tag input:checked + label { background: linear-gradient(135deg,var(--rose-500),var(--rose-700)); color:#fff; border-color:transparent; }
+    body.dark .mode-tabs { background: #1e1e1e; border-color: var(--neutral-200); }
+    body.dark .mode-tab { color: var(--neutral-400); }
+    body.dark .result-toolbar { border-bottom-color: var(--neutral-200); background: #1e1e1e; }
+    body.dark .btn-ghost { background: #252525; border-color: var(--neutral-300); color: var(--neutral-700); }
+    body.dark .btn-ghost:hover { border-color: var(--rose-400); color: var(--rose-500); background: var(--rose-50); }
+    body.dark .day-card { background: #252525; border-color: var(--neutral-200); }
+    body.dark .day-card-body { background: #252525; }
+    body.dark .activity-item { border-bottom-color: var(--neutral-200); }
+    body.dark .activity-item:hover { background: #2e2e2e; }
+    body.dark .act-cost-input { background: #2a2a2a; border-color: var(--neutral-300); color: var(--neutral-900); }
+    body.dark .trip-view-tabs { background: #252525; border-color: var(--neutral-200); }
+    body.dark .trip-vtab { color: var(--neutral-400); }
+    body.dark .budget-bar { background: #1a1a1a; border-top-color: var(--neutral-200); }
+    body.dark .chat-messages { background: #181818; }
+    body.dark .msg.ai .msg-bubble { background: #252525; border-color: var(--neutral-200); color: var(--neutral-900); }
+    body.dark .msg.user .msg-bubble { background: linear-gradient(135deg,var(--rose-600),var(--rose-700)); }
+    body.dark .chat-footer { background: #1e1e1e; border-top-color: var(--neutral-200); }
+    body.dark .chat-input-wrap { background: #252525; border-color: var(--neutral-300); }
+    body.dark #chat-input { background: transparent; color: var(--neutral-900); }
+    body.dark .saved-trip-item { background: #252525; border-color: var(--neutral-200); }
+    body.dark .saved-trip-item:hover { background: #2e2e2e; }
+    body.dark footer { border-top-color: var(--neutral-200); }
+    body.dark .suggestions-dropdown { background: #1e1e1e; border-color: var(--neutral-200); }
+    body.dark .suggestion-item:hover { background: #2a2a2a; }
+    body.dark #packing-custom-section { border-top-color: var(--neutral-200); }
+    body.dark #packing-custom-input { background: #252525; color: var(--neutral-900); }
+    body.dark .share-banner { background: var(--rose-50); border-color: var(--rose-200); color: var(--neutral-700); }
+    body.dark .itin-prose { color: var(--neutral-700); }
+
+    /* ── Share Mode (itinerary-only view when opened from a share link) ── */
+    body.share-mode nav,
+    body.share-mode .hero,
+    body.share-mode .mode-tabs,
+    body.share-mode #panel-manual,
+    body.share-mode #panel-ai,
+    body.share-mode footer,
+    body.share-mode #btn-save-trip,
+    body.share-mode #btn-share-trip,
+    body.share-mode #btn-my-trips { display: none !important; }
+    body.share-mode .main { padding-top: 24px; }
+    body.share-mode #result-panel { display: block !important; border-radius: var(--radius-lg); }
+    .share-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--rose-50);
+      border: 1px solid var(--rose-200);
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      margin-bottom: 16px;
+      font-size: .83rem;
+      color: var(--neutral-700);
+    }
+    .share-banner a {
+      color: var(--rose-600);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .share-banner a:hover { text-decoration: underline; }
+
     /* ── Background FX ── */
     .bg-fx {
       position: fixed;
@@ -1002,6 +1113,23 @@
     }
     .activity-item:hover { border-color: var(--rose-200); background: var(--rose-50); }
     .activity-item:hover .act-actions { opacity: 1; }
+    .activity-item.drag-over { border-color: var(--rose-400); border-style: dashed; background: var(--rose-50); }
+    .activity-item.dragging { opacity: .35; }
+    .drag-handle {
+      display: inline-block;
+      cursor: grab;
+      flex-shrink: 0;
+      width: 14px;
+      height: 18px;
+      background-image: radial-gradient(circle, var(--neutral-400) 1.5px, transparent 1.5px);
+      background-size: 5px 5px;
+      background-repeat: repeat;
+      opacity: .6;
+      user-select: none;
+      border-radius: 2px;
+    }
+    .drag-handle:active { cursor: grabbing; }
+    .activity-item:hover .drag-handle { opacity: 1; background-image: radial-gradient(circle, var(--rose-500) 1.5px, transparent 1.5px); }
     .act-text {
       flex: 1;
       font-size: .875rem;
@@ -1133,6 +1261,51 @@
       color: white;
     }
 
+    /* Map stop navigator */
+    #map-point-nav {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: var(--neutral-50);
+      border-bottom: 1px solid var(--neutral-200);
+      font-family: var(--font);
+    }
+    #map-point-nav.visible { display: flex; }
+    .map-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: 50%;
+      background: var(--white);
+      cursor: pointer;
+      font-size: .9rem;
+      color: var(--neutral-600);
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+    .map-nav-btn:hover:not(:disabled) { border-color: var(--rose-400); color: var(--rose-600); }
+    .map-nav-btn:disabled { opacity: .35; cursor: default; }
+    #map-nav-label {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--neutral-700);
+      flex: 1;
+      text-align: center;
+    }
+    #map-nav-place {
+      font-size: .73rem;
+      color: var(--neutral-500);
+      text-align: center;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     /* Leaflet popup overrides */
     .leaflet-popup-content { margin: 12px 14px; }
     .leaflet-popup-content-wrapper { border-radius: 10px !important; box-shadow: 0 6px 24px rgba(0,0,0,.14) !important; }
@@ -1159,10 +1332,18 @@
 
     /* Saved trips panel */
     #saved-trips-panel {
-      border-top: 1px solid var(--neutral-200);
-      padding: 16px 24px 20px;
-      background: var(--neutral-50);
-      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      position: fixed;
+      top: 62px;
+      right: 24px;
+      z-index: 1000;
+      width: 320px;
+      max-height: 420px;
+      overflow-y: auto;
+      background: var(--white);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      padding: 16px 20px 18px;
       animation: fadeSlideIn .2s ease;
     }
     .saved-trips-title {
@@ -1253,7 +1434,15 @@
       <div class="logo-sub">AI Travel Planner</div>
     </div>
   </a>
-  <span class="nav-badge">MP1 · CSC394</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button id="btn-my-trips" onclick="toggleSavedTrips()"
+      style="font-size:.82rem;padding:6px 14px;background:#2d5a3d;color:#e8f5ee;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font);font-weight:600;transition:background .15s"
+      onmouseover="this.style.background='#1f4530'" onmouseout="this.style.background='#2d5a3d'">📂 My Trips</button>
+    <button id="dark-toggle" onclick="toggleDarkMode()" title="Toggle dark mode"
+      style="background:#2d5a3d;border:none;border-radius:var(--radius-sm);width:34px;height:34px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;color:#e8f5ee"
+      onmouseover="this.style.background='#1f4530'" onmouseout="this.style.background='#2d5a3d'">🌙</button>
+    <span class="nav-badge">MP1 · CSC394</span>
+  </div>
 </nav>
 
 <!-- ── Hero ── -->
@@ -1379,47 +1568,6 @@
       </div>
     </div>
 
-    <!-- Result -->
-    <div class="card" id="result-panel">
-      <div class="result-toolbar">
-        <div class="result-toolbar-left">
-          <div class="dot" id="result-dot"></div>
-          <span id="result-label">Generating itinerary…</span>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-ghost" id="btn-save-trip" onclick="saveTrip()" style="display:none">💾 Save</button>
-          <button class="btn-ghost" id="btn-my-trips" onclick="toggleSavedTrips()" style="display:none">📂 My Trips</button>
-          <button class="btn-ghost" onclick="printResult()">🖨️ Print</button>
-        </div>
-      </div>
-
-      <!-- Streaming preview (visible while generating) -->
-      <div class="result-body" id="result-body"></div>
-
-      <!-- Interactive trip UI (shown after generation) -->
-      <div id="trip-container" style="display:none">
-        <div class="trip-view-tabs">
-          <button class="trip-vtab active" onclick="switchTripView('itinerary',this)">📅 Itinerary</button>
-          <button class="trip-vtab" onclick="switchTripView('map',this)">🗺️ Map</button>
-        </div>
-        <div id="tv-itinerary" class="trip-view-panel"></div>
-        <div id="tv-map" class="trip-view-panel" style="display:none">
-          <div class="map-day-filter" id="map-day-filter"></div>
-          <div id="trip-map"></div>
-        </div>
-        <div class="budget-bar">
-          <span>💰 Estimated Total</span>
-          <span id="budget-total-display">$0</span>
-          <span class="budget-hint">Enter $ amounts on activities to track spending</span>
-        </div>
-      </div>
-
-      <!-- Saved trips dropdown -->
-      <div id="saved-trips-panel" style="display:none">
-        <div class="saved-trips-title">📂 Saved Trips</div>
-        <div id="saved-trips-list"></div>
-      </div>
-    </div>
   </div>
 
   <!-- AI Chat Panel -->
@@ -1467,6 +1615,81 @@
     </div>
   </div>
 
+  <!-- Result Panel (shared by both Manual and Chat modes) -->
+  <div class="card" id="result-panel">
+    <div class="result-toolbar">
+      <div class="result-toolbar-left">
+        <div class="dot" id="result-dot"></div>
+        <span id="result-label">Generating itinerary…</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" id="btn-save-trip" onclick="saveTrip()" style="display:none">💾 Save</button>
+        <button class="btn-ghost" id="btn-share-trip" onclick="shareTrip()" style="display:none">🔗 Share</button>
+        <button class="btn-ghost" id="btn-flights" onclick="searchFlights()" style="display:none">🛫 Flights</button>
+        <button class="btn-ghost" id="btn-calendar" onclick="exportToCalendar()" style="display:none">📅 Calendar</button>
+        <button class="btn-ghost" onclick="printResult()">🖨️ Print</button>
+      </div>
+    </div>
+
+    <!-- Streaming preview (visible while generating) -->
+    <div class="result-body" id="result-body"></div>
+
+    <!-- Interactive trip UI (shown after generation) -->
+    <div id="trip-container" style="display:none">
+      <div class="trip-view-tabs">
+        <button class="trip-vtab active" onclick="switchTripView('itinerary',this)">📅 Itinerary</button>
+        <button class="trip-vtab" onclick="switchTripView('map',this)">🗺️ Map</button>
+        <button class="trip-vtab" onclick="switchTripView('packing',this)">🎒 Packing List</button>
+      </div>
+      <div id="tv-itinerary" class="trip-view-panel"></div>
+      <div id="tv-map" class="trip-view-panel" style="display:none">
+        <div class="map-day-filter" id="map-day-filter"></div>
+        <div id="map-point-nav">
+          <button class="map-nav-btn" id="map-nav-prev" onclick="navPrev()" title="Previous stop">&#8592;</button>
+          <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:3px">
+            <span id="map-nav-label">Stop 1 of 1</span>
+            <span id="map-nav-place"></span>
+          </div>
+          <button class="map-nav-btn" id="map-nav-next" onclick="navNext()" title="Next stop">&#8594;</button>
+        </div>
+        <div id="trip-map"></div>
+      </div>
+      <div id="tv-packing" class="trip-view-panel" style="display:none">
+        <div id="packing-empty" style="text-align:center;padding:40px 24px 24px">
+          <div style="font-size:2.5rem;margin-bottom:12px">🎒</div>
+          <h3 style="font-size:1rem;font-weight:700;color:var(--neutral-800);margin-bottom:8px">What should I pack?</h3>
+          <p style="font-size:.85rem;color:var(--neutral-400);margin-bottom:20px">Atlas will generate a destination-specific packing list for your trip.</p>
+          <button class="btn-primary" onclick="generatePackingList()">✨ Generate Packing List</button>
+        </div>
+        <div id="packing-output" style="display:none;padding:20px 24px 0"></div>
+        <!-- Manual items — always visible -->
+        <div id="packing-custom-section" style="padding:16px 24px 24px;border-top:1px solid var(--neutral-100);margin-top:4px">
+          <div style="font-size:.75rem;font-weight:700;color:var(--neutral-600);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">✏️ My Items</div>
+          <div id="packing-custom-list"></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <input type="text" id="packing-custom-input" placeholder="Add your own item…"
+              style="flex:1;padding:9px 12px;border:1.5px solid var(--neutral-200);border-radius:var(--radius-sm);font-family:var(--font);font-size:.87rem;outline:none;transition:border-color .15s"
+              onfocus="this.style.borderColor='var(--rose-400)'" onblur="this.style.borderColor='var(--neutral-200)'"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();addPackingItem()}" />
+            <button class="btn-ghost" onclick="addPackingItem()" style="white-space:nowrap">+ Add</button>
+          </div>
+        </div>
+      </div>
+      <div class="budget-bar">
+        <span>💰 Estimated Total</span>
+        <span id="budget-total-display">$0</span>
+        <span class="budget-hint">Enter $ amounts on activities to track spending</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Saved trips floating dropdown (anchored to nav My Trips button) -->
+<div id="saved-trips-panel" style="display:none">
+  <div class="saved-trips-title">📂 Saved Trips</div>
+  <div id="saved-trips-list"></div>
 </div>
 
 <!-- ── Footer ── -->
@@ -1633,13 +1856,20 @@
 
   // ── Build trip data model from streamed markdown ──
   function buildTripFromText(rawText, meta) {
-    const parts = rawText.split(/(?=^#{1,2} )/m);
+    // Normalise various LLM day-header formats into ## Day N: Title
+    const normalised = rawText
+      // **Day 1: Title** or **Day 1 - Title**
+      .replace(/^\*{1,2}(Day\s*\d+[^*\n]*)\*{1,2}/gim, '## $1')
+      // Day 1: Title (plain, no markdown)
+      .replace(/^(Day\s*\d+\s*[:\-–—]\s*[^\n]+)/gim, (m, g) => m.startsWith('#') ? m : '## ' + g);
+
+    const parts = normalised.split(/(?=^#{1,3} )/m);
     const days = [];
     let dayCount = 0;
     for (const part of parts) {
-      if (!part.trim() || !part.match(/^#{1,2} /)) continue;
+      if (!part.trim() || !part.match(/^#{1,3} /)) continue;
       const lines = part.split('\n');
-      const heading = lines[0].replace(/^#{1,2} /, '').trim();
+      const heading = lines[0].replace(/^#{1,3} /, '').trim();
       // Only treat lines that look like day headings as day cards
       const dayMatch = heading.match(/^(Day\s*\d+)[:\s·—\-]*/i);
       if (!dayMatch) continue;
@@ -1674,18 +1904,20 @@
       // Prefer a "total" line; otherwise sum all dollar amounts in the section
       const totalLine = section.split('\n').find(l => /total/i.test(l) && /\$[\d,]/.test(l));
       if (totalLine) {
-        const m = totalLine.match(/\$([\d,]+)/);
+        const m = totalLine.replace(/\*/g,'').match(/\$([\d,]+)/);
         if (m) budgetEstimate = parseFloat(m[1].replace(/,/g,''));
       } else {
         const amounts = [...section.matchAll(/\$([\d,]+)/g)].map(m => parseFloat(m[1].replace(/,/g,'')));
-        budgetEstimate = amounts.reduce((s,n) => s+n, 0);
+        // Only sum if values look like per-item costs (< $10k each), not grand totals
+        const filtered = amounts.filter(n => n < 10000);
+        budgetEstimate = filtered.reduce((s,n) => s+n, 0);
       }
     }
     if (!budgetEstimate) {
       // Last-resort: scan whole text for a grand-total line
       const totalLine = rawText.split('\n').reverse().find(l => /total/i.test(l) && /\$[\d,]/.test(l));
       if (totalLine) {
-        const m = totalLine.match(/\$([\d,]+)/);
+        const m = totalLine.replace(/\*/g,'').match(/\$([\d,]+)/);
         if (m) budgetEstimate = parseFloat(m[1].replace(/,/g,''));
       }
     }
@@ -1696,14 +1928,24 @@
   // ── Render full interactive trip UI ──
   function renderTripUI(data) {
     tripData = data;
+    _userEditedCosts = false;
     document.getElementById('result-body').style.display = 'none';
     document.getElementById('trip-container').style.display = '';
     document.getElementById('btn-save-trip').style.display = '';
-    document.getElementById('btn-my-trips').style.display = '';
+    document.getElementById('btn-share-trip').style.display = '';
+    document.getElementById('btn-flights').style.display = '';
+    document.getElementById('btn-calendar').style.display = '';
     // Always reset to itinerary tab so the view is never left stuck on map
     document.querySelectorAll('.trip-vtab').forEach((t, i) => t.classList.toggle('active', i === 0));
     document.getElementById('tv-itinerary').style.display = '';
     document.getElementById('tv-map').style.display = 'none';
+    document.getElementById('tv-packing').style.display = 'none';
+    // Reset packing tab so a new trip gets a fresh generate prompt
+    document.getElementById('packing-empty').style.display = '';
+    document.getElementById('packing-output').style.display = 'none';
+    document.getElementById('packing-output').innerHTML = '';
+    packingItems = [];
+    renderPackingItems();
 
     const fmtDate = d => d ? new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
     const dateRange = [fmtDate(data.meta.startDate), fmtDate(data.meta.endDate)].filter(Boolean).join(' → ');
@@ -1745,7 +1987,11 @@
 
   // ── Render one activity row ──
   function renderActivity(act, dayId) {
-    return `<div class="activity-item" id="${act.id}">
+    return `<div class="activity-item" id="${act.id}"
+      draggable="true" data-act-id="${act.id}" data-day-id="${dayId}"
+      ondragstart="actDragStart(event)" ondragover="actDragOver(event)"
+      ondrop="actDrop(event)" ondragend="actDragEnd(event)" ondragleave="actDragLeave(event)">
+      <span class="drag-handle" title="Drag to reorder"></span>
       <span class="act-text" id="text-${act.id}">${esc(act.text)}</span>
       <div class="act-cost-wrap">$<input type="number" class="act-cost-input" value="${act.cost||0}" min="0" step="1"
         oninput="updateCost('${dayId}','${act.id}',this.value)" placeholder="0"></div>
@@ -1754,6 +2000,57 @@
         <button class="act-btn del" title="Delete" onclick="deleteActivity('${dayId}','${act.id}')">🗑️</button>
       </div>
     </div>`;
+  }
+
+  // ── Activity Drag-to-Reorder ──
+  let _dragActId = null, _dragDayId = null;
+  let _navData = null, _navIdx = 0;
+  let _mapMarkerData = null;
+  let _userEditedCosts = false;
+
+  function actDragStart(e) {
+    // Don't start drag when clicking edit/delete buttons or cost input
+    if (e.target.closest('.act-btn, .act-cost-input, .act-text[contenteditable="true"]')) {
+      e.preventDefault(); return;
+    }
+    _dragActId = e.currentTarget.dataset.actId;
+    _dragDayId = e.currentTarget.dataset.dayId;
+    e.currentTarget.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function actDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const el = e.currentTarget;
+    if (el.dataset.actId !== _dragActId) el.classList.add('drag-over');
+  }
+
+  function actDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+
+  function actDrop(e) {
+    e.preventDefault();
+    const targetEl = e.currentTarget;
+    targetEl.classList.remove('drag-over');
+    const targetActId = targetEl.dataset.actId;
+    const targetDayId = targetEl.dataset.dayId;
+    if (!_dragActId || _dragActId === targetActId || _dragDayId !== targetDayId) return;
+    const day = tripData.days.find(d => d.id === _dragDayId);
+    if (!day) return;
+    const srcIdx = day.activities.findIndex(a => a.id === _dragActId);
+    const tgtIdx = day.activities.findIndex(a => a.id === targetActId);
+    if (srcIdx === -1 || tgtIdx === -1) return;
+    const [moved] = day.activities.splice(srcIdx, 1);
+    day.activities.splice(tgtIdx, 0, moved);
+    rerenderDay(_dragDayId);
+  }
+
+  function actDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.activity-item').forEach(el => el.classList.remove('drag-over'));
+    _dragActId = null; _dragDayId = null;
   }
 
   // ── Activity CRUD ──
@@ -1819,15 +2116,22 @@
     const day = tripData.days.find(d=>d.id===dayId);
     const act = day?.activities.find(a=>a.id===actId);
     if (act) act.cost = parseFloat(val)||0;
+    _userEditedCosts = true;
     updateBudgetTotal();
   }
 
   function updateBudgetTotal() {
     if (!tripData) return;
-    const tracked = tripData.days.reduce((s,d)=>s+d.activities.reduce((ss,a)=>ss+(a.cost||0),0),0);
-    const display = tracked || tripData.budgetEstimate || 0;
     const el = document.getElementById('budget-total-display');
-    if (el) el.textContent = '$'+display.toLocaleString();
+    if (!el) return;
+    if (_userEditedCosts) {
+      // User is manually tracking — sum their entered costs
+      const tracked = tripData.days.reduce((s,d)=>s+d.activities.reduce((ss,a)=>ss+(a.cost||0),0),0);
+      el.textContent = '$' + tracked.toLocaleString();
+    } else {
+      // Show AI's stated grand total as the estimate
+      el.textContent = '$' + (tripData.budgetEstimate || 0).toLocaleString();
+    }
   }
 
   // ── Trip view tabs ──
@@ -1836,9 +2140,30 @@
     if (el) el.classList.add('active');
     document.getElementById('tv-itinerary').style.display = view==='itinerary' ? '' : 'none';
     document.getElementById('tv-map').style.display = view==='map' ? '' : 'none';
+    document.getElementById('tv-packing').style.display = view==='packing' ? '' : 'none';
     if (view==='map') {
-      if (mapInstance) setTimeout(()=>mapInstance.invalidateSize(), 80);
-      else if (tripData) fetchWeatherForTrip(tripData);
+      if (mapInstance) {
+        setTimeout(() => {
+          mapInstance.invalidateSize();
+          // Auto-select Day 1 and center on stop 1 each time the map tab opens
+          if (_mapMarkerData && _mapMarkerData.length > 0) {
+            const first = _mapMarkerData[0];
+            // Update filter bar active state
+            const bar = document.getElementById('map-day-filter');
+            if (bar) {
+              bar.querySelectorAll('.map-day-btn').forEach(b => b.classList.remove('active'));
+              const day1Btn = bar.querySelector(`.map-day-btn[data-day="${first.dayId}"]`);
+              if (day1Btn) day1Btn.classList.add('active');
+            }
+            // Show only day 1 layer
+            _mapMarkerData.forEach(m => {
+              if (m === first) { if (!mapInstance.hasLayer(m.layerGroup)) m.layerGroup.addTo(mapInstance); }
+              else { if (mapInstance.hasLayer(m.layerGroup)) mapInstance.removeLayer(m.layerGroup); }
+            });
+            initDayNav(first);
+          }
+        }, 80);
+      } else if (tripData) fetchWeatherForTrip(tripData);
     }
   }
 
@@ -1996,6 +2321,51 @@
   }
 
   // ── Render day filter buttons in the map bar ──
+  function initDayNav(m) {
+    const nav = document.getElementById('map-point-nav');
+    if (!nav) return;
+    // Use geocoded markers if available, otherwise fall back to the single placeholder marker
+    const markers = m.markers && m.markers.length ? m.markers : (m.firstMarker ? [m.firstMarker] : []);
+    if (!markers.length) { nav.classList.remove('visible'); return; }
+    _navData = { m, markers };
+    _navIdx = 0;
+    nav.classList.add('visible');
+    navTo(0);
+  }
+
+  function navTo(idx) {
+    if (!_navData) return;
+    const { m, markers } = _navData;
+    _navIdx = Math.max(0, Math.min(idx, markers.length - 1));
+    const marker = markers[_navIdx];
+    if (mapInstance && marker) {
+      mapInstance.flyTo(marker.getLatLng(), 16, { duration: 0.6 });
+      // Open popup after fly animation ends so autopan can't fight the centering
+      mapInstance.once('moveend', () => {
+        marker.openPopup();
+        mapInstance.panTo(marker.getLatLng());
+      });
+    }
+    const label = document.getElementById('map-nav-label');
+    const place = document.getElementById('map-nav-place');
+    const prev = document.getElementById('map-nav-prev');
+    const next = document.getElementById('map-nav-next');
+    if (label) label.textContent = `Stop ${_navIdx + 1} of ${markers.length}`;
+    if (place) place.textContent = marker._placeName || '';
+    if (prev) prev.disabled = _navIdx === 0;
+    if (next) next.disabled = _navIdx === markers.length - 1;
+  }
+
+  function navNext() { if (_navData) navTo(_navIdx + 1); }
+  function navPrev() { if (_navData) navTo(_navIdx - 1); }
+
+  function hideNav() {
+    _navData = null;
+    _navIdx = 0;
+    const nav = document.getElementById('map-point-nav');
+    if (nav) nav.classList.remove('visible');
+  }
+
   function renderMapDayFilter(markerData) {
     const bar = document.getElementById('map-day-filter');
     if (!bar) return;
@@ -2024,6 +2394,7 @@
       const dayId = btn.dataset.day;
 
       if (dayId === 'all') {
+        hideNav();
         markerData.forEach(m => { if (!mapInstance.hasLayer(m.layerGroup)) m.layerGroup.addTo(mapInstance); });
         const pts = markerData.flatMap(m => m.geocodedPoints.length ? m.geocodedPoints : [m.latlng]);
         if (pts.length > 1) mapInstance.fitBounds(pts, {padding:[48,48], maxZoom:15});
@@ -2038,85 +2409,98 @@
         const pts = target.geocodedPoints.length ? target.geocodedPoints : [target.latlng];
         if (pts.length > 1) mapInstance.fitBounds(pts, {padding:[60,60], maxZoom:15});
         else mapInstance.setView(pts[0], 15);
-        if (target.firstMarker) target.firstMarker.openPopup();
+        initDayNav(target);
       }
     });
   }
 
-  // ── Geocode actual activity places and replace placeholder markers ──
+  // ── Geocode all activity places via batch endpoint and pin every location ──
   async function geocodeActivityPlaces(markerData, destination, centerLat, centerLon) {
+    // Collect all place candidates from all days (up to 6 per day)
+    const allCandidates = [];
+    for (const m of markerData) {
+      const candidates = extractPlacesFromDay(m.activities, 6);
+      candidates.forEach(({ place, actText }) => {
+        allCandidates.push({ q: `${place}, ${destination}`, place, actText, dayId: m.dayId });
+      });
+    }
+    if (!allCandidates.length) return;
+
+    // Show loading hint
     const bar = document.getElementById('map-day-filter');
-    // Loading hint
     let hint = null;
     if (bar) {
       hint = document.createElement('span');
       hint.style.cssText = 'font-size:.71rem;color:var(--neutral-400);margin-left:auto;align-self:center;white-space:nowrap;flex-shrink:0;padding-right:4px';
-      hint.textContent = '⟳ Mapping locations…';
+      hint.textContent = `⟳ Mapping ${allCandidates.length} locations…`;
       bar.appendChild(hint);
     }
 
-    const allRealPoints = [];
+    try {
+      const res = await fetch('/api/geocode/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ queries: allCandidates.map(c => c.q) })
+      });
+      const { results } = await res.json();
 
-    for (const m of markerData) {
-      const candidates = extractPlacesFromDay(m.activities, 2);
-      const dayPoints = [];
+      // Group valid geocoded points by dayId
+      const byDay = {};
+      results.forEach((result, i) => {
+        if (!result.lat || !result.lon) return;
+        const dist = Math.hypot(result.lat - centerLat, result.lon - centerLon);
+        if (dist >= 2.0) return;
+        const { dayId, place, actText } = allCandidates[i];
+        if (!byDay[dayId]) byDay[dayId] = [];
+        byDay[dayId].push({ lat: result.lat, lon: result.lon, place, actText });
+      });
 
-      for (const { place, actText } of candidates) {
-        try {
-          const q = `${place}, ${destination}`;
-          const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
-          const { lat, lon } = await r.json();
-          if (lat && lon) {
-            // Sanity check: must be within ~220 km of destination center
-            const dist = Math.sqrt(Math.pow(lat - centerLat, 2) + Math.pow(lon - centerLon, 2));
-            if (dist < 2.0) {
-              dayPoints.push({ lat, lon, place, actText });
-            }
-          }
-        } catch (_) {}
-        await new Promise(res => setTimeout(res, 1100));
-      }
+      const allRealPoints = [];
 
-      if (dayPoints.length > 0) {
-        // Replace placeholder marker with real activity markers
+      for (const m of markerData) {
+        const pts = byDay[m.dayId] || [];
+        if (!pts.length) continue;
+
         m.layerGroup.clearLayers();
-        m.geocodedPoints = dayPoints.map(p => [p.lat, p.lon]);
+        m.markers = [];
+        m.geocodedPoints = pts.map(p => [p.lat, p.lon]);
+        allRealPoints.push(...m.geocodedPoints);
 
-        dayPoints.forEach((pt, i) => {
+        pts.forEach((pt, i) => {
           const icon = makeActivityIcon(i + 1, m.color);
           const popup = buildActivityPopupHtml(m.dayTitle, m.color, pt.place, pt.actText);
           const marker = L.marker([pt.lat, pt.lon], { icon }).bindPopup(popup).addTo(m.layerGroup);
+          marker._placeName = pt.place;
           if (i === 0) m.firstMarker = marker;
+          m.markers.push(marker);
         });
 
-        // Intra-day route line connecting this day's places
-        if (dayPoints.length > 1) {
-          L.polyline(dayPoints.map(p => [p.lat, p.lon]), {
+        if (pts.length > 1) {
+          L.polyline(pts.map(p => [p.lat, p.lon]), {
             color: m.color, weight: 2.5, opacity: 0.65, dashArray: '5,7'
           }).addTo(m.layerGroup);
         }
 
-        // Update inter-day route with first geocoded point of each day
-        m.latlng = [dayPoints[0].lat, dayPoints[0].lon];
-        allRealPoints.push(...m.geocodedPoints);
-
-        if (mapInstance?._routeLine) {
-          mapInstance._routeLine.setLatLngs(markerData.map(md => md.latlng));
-        }
+        m.latlng = [pts[0].lat, pts[0].lon];
       }
-    }
 
-    // Remove loading hint
-    hint?.remove();
+      if (mapInstance?._routeLine) {
+        mapInstance._routeLine.setLatLngs(markerData.map(md => md.latlng));
+      }
 
-    // Fit map to all real points and notify user
-    if (allRealPoints.length > 0) {
-      mapInstance.fitBounds([[centerLat, centerLon], ...allRealPoints], {
-        padding: [48, 48], maxZoom: 15
-      });
-      showToast(`📍 ${allRealPoints.length} location${allRealPoints.length !== 1 ? 's' : ''} mapped`);
-    } else {
-      showToast('⚠️ Could not find specific locations — check the itinerary text');
+      hint?.remove();
+
+      if (allRealPoints.length > 0) {
+        mapInstance.fitBounds([[centerLat, centerLon], ...allRealPoints], {
+          padding: [48, 48], maxZoom: 15
+        });
+        showToast(`📍 ${allRealPoints.length} location${allRealPoints.length !== 1 ? 's' : ''} mapped`);
+      } else {
+        showToast('⚠️ Could not find specific locations — check the itinerary text');
+      }
+    } catch (e) {
+      hint?.remove();
+      console.warn('Batch geocoding error:', e);
     }
   }
 
@@ -2127,18 +2511,18 @@
 
     mapInstance = L.map(div, { zoomControl: true }).setView([lat, lon], 13);
 
-    // Esri World Street Map — English labels at all zoom levels
+    // CartoDB Voyager — clean modern look, English labels, streets visible
+    const cartoVoyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; OpenStreetMap contributors',
+      subdomains: 'abcd', maxZoom: 20
+    });
+    // Esri World Street Map — detailed, English labels
     const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
       attribution: '&copy; <a href="https://www.esri.com/">Esri</a>, &copy; OpenStreetMap contributors',
       maxZoom: 19
     });
-    // CartoDB Light — clean minimal look (local-language labels)
-    const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: 'abcd', maxZoom: 20
-    });
-    esriStreet.addTo(mapInstance);
-    L.control.layers({'🗺 Street (EN)': esriStreet, '◻ Light': cartoLight}, {}, {position:'topright', collapsed:false}).addTo(mapInstance);
+    cartoVoyager.addTo(mapInstance);
+    L.control.layers({'◻ Light': cartoVoyager, '🗺 Street': esriStreet}, {}, {position:'topright', collapsed:false}).addTo(mapInstance);
 
     // Destination center pin
     const centerIcon = L.divIcon({
@@ -2150,7 +2534,7 @@
 
     // Build per-day placeholder markers (shown while geocoding runs)
     const days = tripData?.days || [];
-    const markerData = days.map((day, idx) => {
+    _mapMarkerData = days.map((day, idx) => {
       const color = DAY_COLORS[idx % DAY_COLORS.length];
       const latlng = days.length === 1 ? [lat + 0.005, lon + 0.005] : dayOffset(lat, lon, idx, days.length);
       const group = L.layerGroup().addTo(mapInstance);
@@ -2160,27 +2544,27 @@
       return {
         dayId: day.id, dayNum: day.dayNum, dayTitle: day.title,
         subtitle: day.subtitle, color, latlng, marker, firstMarker: marker,
-        layerGroup: group, geocodedPoints: [], activities: day.activities
+        layerGroup: group, geocodedPoints: [], activities: day.activities, markers: []
       };
     });
 
     // Inter-day route polyline (connects first point of each day)
-    if (markerData.length > 1) {
-      mapInstance._routeLine = L.polyline(markerData.map(m => m.latlng), {
+    if (_mapMarkerData.length > 1) {
+      mapInstance._routeLine = L.polyline(_mapMarkerData.map(m => m.latlng), {
         color: '#94a3b8', weight: 1.5, opacity: 0.4, dashArray: '6,10'
       }).addTo(mapInstance);
     }
 
     // Fit placeholder markers into view
-    const allPts = [[lat, lon], ...markerData.map(m => m.latlng)];
+    const allPts = [[lat, lon], ..._mapMarkerData.map(m => m.latlng)];
     if (allPts.length > 1) mapInstance.fitBounds(allPts, {padding:[48,48], maxZoom:14});
 
     // Day filter bar
-    renderMapDayFilter(markerData);
+    renderMapDayFilter(_mapMarkerData);
 
     // Async: geocode real activity places and replace placeholder markers
     if (days.length > 0) {
-      geocodeActivityPlaces(markerData, destination, lat, lon).catch(e => console.warn('Map geocoding error:', e));
+      geocodeActivityPlaces(_mapMarkerData, destination, lat, lon).catch(e => console.warn('Map geocoding error:', e));
     }
   }
 
@@ -2195,10 +2579,266 @@
     showToast('Trip saved! 💾');
   }
 
+  // ── Trip Sharing (base64 URL hash, no backend storage) ──
+  function shareTrip() {
+    if (!tripData) return;
+    try {
+      const payload = JSON.stringify({ meta: tripData.meta, rawText: tripData.rawText });
+      const encoded = btoa(unescape(encodeURIComponent(payload)));
+      const url = `${location.origin}${location.pathname}#trip=${encoded}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('🔗 Share link copied to clipboard!');
+      }).catch(() => {
+        prompt('Copy this share link:', url);
+      });
+    } catch (e) {
+      showToast('⚠️ Could not generate share link');
+    }
+  }
+
+  // ── Flight Search Integration (Google Flights deep-link) ──
+  function searchFlights() {
+    if (!tripData) return;
+    const { destination, startDate, endDate, travelers } = tripData.meta;
+
+    // Format dates as YYYY-MM-DD for Google Flights
+    const dep = startDate || '';
+    const ret = endDate || '';
+
+    // Google Flights URL: pre-fills destination, dates, and passenger count
+    // Hash format: .<destination>.<departure>.<return>.<adults>
+    let url;
+    if (dep && ret) {
+      url = `https://www.google.com/travel/flights#flt=.${encodeURIComponent(destination)}.${dep}.${ret}.${travelers || 1};c:USD;e:1;sd:1;t:f`;
+    } else {
+      url = `https://www.google.com/travel/flights?q=${encodeURIComponent('flights to ' + destination)}&hl=en`;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+    showToast('🛫 Opening Google Flights…');
+  }
+
+  // ── Export to Calendar (.ics) ──
+  function icsEscape(str) {
+    return String(str || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '');
+  }
+
+  function exportToCalendar() {
+    if (!tripData) return;
+    const { destination, startDate } = tripData.meta;
+
+    if (!startDate) {
+      showToast('⚠️ Add departure date to export calendar');
+      return;
+    }
+
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Atlas AI Travel Planner//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'X-WR-CALNAME:' + icsEscape(destination + ' Trip — Atlas'),
+      'X-WR-TIMEZONE:UTC',
+    ];
+
+    tripData.days.forEach((day, i) => {
+      const base = new Date(startDate + 'T12:00:00');
+      base.setDate(base.getDate() + i);
+      const next = new Date(base);
+      next.setDate(next.getDate() + 1);
+
+      const fmt = d => d.toISOString().split('T')[0].replace(/-/g, '');
+      const dateStr = fmt(base);
+      const nextStr = fmt(next);
+
+      // Build description: subtitle + categorised activity list
+      const actLines = [];
+      const cats = {};
+      day.activities.forEach(a => { (cats[a.category] = cats[a.category] || []).push(a.text); });
+      Object.entries(cats).forEach(([cat, acts]) => {
+        actLines.push('── ' + cat + ' ──');
+        acts.forEach(t => actLines.push('• ' + t));
+        actLines.push('');
+      });
+      const desc = [day.subtitle, '', ...actLines].filter(l => l !== undefined).join('\n').trim();
+
+      const summary = 'Day ' + day.dayNum + (day.subtitle ? ' — ' + day.subtitle : '') + ' | ' + destination;
+
+      lines.push('BEGIN:VEVENT');
+      lines.push('UID:atlas-day' + (i + 1) + '-' + Date.now() + '@atlas-travel');
+      lines.push('DTSTART;VALUE=DATE:' + dateStr);
+      lines.push('DTEND;VALUE=DATE:' + nextStr);
+      lines.push('SUMMARY:' + icsEscape(summary));
+      lines.push('DESCRIPTION:' + icsEscape(desc));
+      lines.push('LOCATION:' + icsEscape(destination));
+      lines.push('END:VEVENT');
+    });
+
+    lines.push('END:VCALENDAR');
+
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'atlas-' + destination.replace(/[^a-z0-9]/gi, '-').toLowerCase() + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📅 Calendar file downloaded!');
+  }
+
+  // ── Packing List — Manual Items ──
+  let packingItems = [];
+
+  function addPackingItem() {
+    const input = document.getElementById('packing-custom-input');
+    const text = input.value.trim();
+    if (!text) return;
+    packingItems.push({ id: 'pi-' + Math.random().toString(36).slice(2, 8), text, checked: false });
+    input.value = '';
+    renderPackingItems();
+  }
+
+  function togglePackingItem(id) {
+    const item = packingItems.find(i => i.id === id);
+    if (item) { item.checked = !item.checked; renderPackingItems(); }
+  }
+
+  function deletePackingItem(id) {
+    packingItems = packingItems.filter(i => i.id !== id);
+    renderPackingItems();
+  }
+
+  function renderPackingItems() {
+    const list = document.getElementById('packing-custom-list');
+    if (!list) return;
+    if (!packingItems.length) {
+      list.innerHTML = '<p style="color:var(--neutral-400);font-size:.82rem;margin:0">Nothing added yet.</p>';
+      return;
+    }
+    list.innerHTML = packingItems.map(item => `
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--neutral-100)">
+        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="togglePackingItem('${item.id}')"
+          style="width:15px;height:15px;accent-color:var(--rose-500);cursor:pointer;flex-shrink:0" />
+        <span style="flex:1;font-size:.87rem;color:var(--neutral-800);${item.checked ? 'text-decoration:line-through;color:var(--neutral-400)' : ''}">${esc(item.text)}</span>
+        <button onclick="deletePackingItem('${item.id}')"
+          style="background:none;border:none;cursor:pointer;color:var(--neutral-400);font-size:.8rem;padding:2px 4px;line-height:1"
+          onmouseover="this.style.color='var(--rose-500)'" onmouseout="this.style.color='var(--neutral-400)'">✕</button>
+      </div>`).join('');
+  }
+
+  // ── AI Packing List Generator ──
+  async function generatePackingList() {
+    if (!tripData) return;
+    const { destination, startDate, endDate, travelers, budget, interests } = tripData.meta;
+
+    const fmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+    const dateRange = [fmtDate(startDate), fmtDate(endDate)].filter(Boolean).join(' to ');
+    const interestStr = Array.isArray(interests) && interests.length ? interests.join(', ') : 'general sightseeing';
+
+    const prompt = `Create a comprehensive, destination-specific packing list for the following trip:
+
+**Destination:** ${destination}
+**Dates:** ${dateRange || 'not specified'}
+**Travelers:** ${travelers || 1}
+**Budget:** ${budget || 'Moderate'}
+**Interests:** ${interestStr}
+
+Organize the list into clearly labeled categories using ## headers. Include items specific to ${destination}'s climate, culture, and the activities listed in the interests. Use bullet points for each item. Categories to cover: Documents & Money, Clothing & Footwear, Toiletries & Health, Electronics & Gadgets, Day Pack Essentials, and Destination-Specific Items. Keep it practical and concise.`;
+
+    const empty = document.getElementById('packing-empty');
+    const output = document.getElementById('packing-output');
+
+    empty.style.display = 'none';
+    output.style.display = '';
+    output.innerHTML = '<span class="cursor"></span>';
+
+    try {
+      const res = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+      });
+
+      let fullText = '';
+      await streamResponse(res, chunk => {
+        fullText += chunk;
+        output.innerHTML = renderMarkdown(fullText) + '<span class="cursor"></span>';
+      });
+
+      output.innerHTML = renderMarkdown(fullText) +
+        `<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--neutral-100);display:flex;gap:8px;align-items:center">
+          <button class="btn-ghost" onclick="regeneratePackingList()" style="font-size:.8rem">🔄 Regenerate</button>
+          <span style="font-size:.75rem;color:var(--neutral-400)">Generated for ${esc(destination)}</span>
+        </div>`;
+    } catch (e) {
+      output.innerHTML = '<p style="color:var(--rose-600);padding:8px 0">⚠️ Error generating packing list. Check your API key and try again.</p>';
+    }
+  }
+
+  function regeneratePackingList() {
+    document.getElementById('packing-output').style.display = 'none';
+    document.getElementById('packing-output').innerHTML = '';
+    document.getElementById('packing-empty').style.display = '';
+  }
+
+  function loadTripFromHash() {
+    const hash = location.hash;
+    if (!hash.startsWith('#trip=')) return;
+    try {
+      const encoded = hash.slice(6);
+      const payload = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+      if (!payload.meta || !payload.rawText) return;
+      const data = buildTripFromText(payload.rawText, payload.meta);
+
+      // Enter share mode — hide all planning UI, show only the itinerary
+      document.body.classList.add('share-mode');
+
+      const panel = document.getElementById('result-panel');
+      panel.classList.add('visible');
+      document.getElementById('result-dot').classList.add('done');
+      document.getElementById('result-label').textContent = esc(payload.meta.destination || 'Trip') + ' ✓';
+
+      // Insert a small banner above the result panel with a link back to the planner
+      const banner = document.createElement('div');
+      banner.className = 'share-banner';
+      banner.innerHTML = `<span>✈️ Shared itinerary — view only</span><a href="${location.origin}${location.pathname}">Plan your own trip →</a>`;
+      panel.parentNode.insertBefore(banner, panel);
+
+      renderTripUI(data);
+    } catch (e) {
+      console.warn('Could not load trip from URL hash:', e);
+    }
+  }
+
   function toggleSavedTrips() {
     const panel = document.getElementById('saved-trips-panel');
-    if (panel.style.display==='none') { renderSavedTrips(); panel.style.display=''; }
-    else panel.style.display='none';
+    if (panel.style.display==='none') {
+      renderSavedTrips();
+      panel.style.display='';
+      setTimeout(() => {
+        document.addEventListener('click', _closeSavedTrips);
+      }, 0);
+    } else {
+      panel.style.display='none';
+      document.removeEventListener('click', _closeSavedTrips);
+    }
+  }
+
+  function _closeSavedTrips(e) {
+    const panel = document.getElementById('saved-trips-panel');
+    const btn = document.getElementById('btn-my-trips');
+    if (!panel.contains(e.target) && !btn.contains(e.target)) {
+      panel.style.display = 'none';
+      document.removeEventListener('click', _closeSavedTrips);
+    }
   }
 
   function renderSavedTrips() {
@@ -2222,6 +2862,7 @@
     if (!trip) return;
     rawResultText = trip.rawText||'';
     if (mapInstance) { mapInstance.remove(); mapInstance = null; }
+    _mapMarkerData = null; hideNav();
     const panel = document.getElementById('result-panel');
     panel.classList.add('visible');
     document.getElementById('result-dot').classList.add('done');
@@ -2330,10 +2971,13 @@
 
     // Reset state
     if (mapInstance) { mapInstance.remove(); mapInstance = null; }
+    _mapMarkerData = null; hideNav();
     document.getElementById('trip-container').style.display = 'none';
     document.getElementById('saved-trips-panel').style.display = 'none';
     document.getElementById('btn-save-trip').style.display = 'none';
-    document.getElementById('btn-my-trips').style.display = 'none';
+    document.getElementById('btn-share-trip').style.display = 'none';
+    document.getElementById('btn-flights').style.display = 'none';
+    document.getElementById('btn-calendar').style.display = 'none';
     body.style.display = '';
     panel.classList.add('visible');
     dot.classList.remove('done');
@@ -2546,6 +3190,24 @@
   const style = document.createElement('style');
   style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
   document.head.appendChild(style);
+
+  // ── Dark Mode ──
+  function toggleDarkMode() {
+    const dark = document.body.classList.toggle('dark');
+    localStorage.setItem('atlas-dark', dark ? '1' : '0');
+    document.getElementById('dark-toggle').textContent = dark ? '☀️' : '🌙';
+  }
+
+  // Apply saved preference on load
+  if (localStorage.getItem('atlas-dark') === '1') {
+    document.body.classList.add('dark');
+    document.getElementById('dark-toggle').textContent = '☀️';
+  }
+
+  // ── Load shared trip from URL hash on page open ──
+  // Script is at bottom of body so DOM is already ready — call directly
+  renderPackingItems();
+  loadTripFromHash();
 
 </script>
 

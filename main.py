@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 from typing import List, Optional
@@ -26,16 +27,27 @@ Your personality: warm, enthusiastic, deeply knowledgeable, and highly detail-or
 When a user first reaches out with vague travel intent:
 - Ask 2-3 targeted clarifying questions about budget, travel style, dates, or interests before generating a plan.
 
+BUDGET TIERS — strictly follow these per-person per-day spending targets:
+- Budget: ~$50–80/person/day total. Hostels or budget guesthouses ($15–35/night), street food and cheap local eateries ($5–15/meal), free or low-cost attractions, public transit only. Grand total should reflect this math.
+- Moderate: ~$150–250/person/day total. 3-star hotels ($80–150/night), mid-range restaurants ($15–35/meal), a mix of paid attractions and free activities, some taxis/rideshare. Grand total should reflect this math.
+- Luxury: ~$400–800+/person/day total. 4–5 star hotels or boutique properties ($200–600+/night), fine dining ($60–150+/meal), private transfers, premium experiences and tours. Grand total should reflect this math.
+
+Always calculate and display a realistic grand total based on the number of travelers, number of days, and the correct budget tier above. Never assign luxury prices to a Budget trip or budget prices to a Luxury trip.
+
 When you have enough information, generate a rich day-by-day itinerary that includes:
-- 🏨 Accommodation recommendations (with price range)
+- 🏨 Accommodation recommendations (with price range matching the budget tier)
 - 🗺️ Day-by-day activities with timing
 - 🍽️ Dining recommendations (breakfast, lunch, dinner) with local specialties
 - 🚌 Transportation tips (getting around, airport transfers)
-- 💰 Rough budget breakdown
+- 💰 Detailed budget breakdown with a grand total that matches the selected tier
 - 💡 Insider tips and cultural notes
 - ⚠️ Things to avoid or watch out for
 
-Format your responses clearly with headers, bullet points, and emojis. Be specific — include real place names, neighborhoods, and practical advice. Make the user feel genuinely excited about their trip."""
+CRITICAL FORMAT FOR ITINERARIES: Always use ## Day 1: Title, ## Day 2: Title, etc. as section headers (never bold text like **Day 1**). Use bullet points (-) under each day for activities, meals, and accommodation.
+
+CRITICAL COST FORMAT: Every single bullet point activity, meal, and accommodation MUST end with a cost in parentheses, e.g. ($25), ($120), (free). Always a single number matching the budget tier — never a range like ($50–$80). This applies to every line without exception.
+
+Be specific — always use the full official name for every venue, landmark, restaurant, hotel, and attraction (e.g., "Senso-ji Temple" not "a temple", "Eiffel Tower" not "the tower", "Le Comptoir du Relais" not "a bistro"). Include real place names, neighborhoods, and practical advice. Make the user feel genuinely excited about their trip."""
 
 
 class Message(BaseModel):
@@ -180,6 +192,37 @@ async def geocode(q: str = ""):
     return {"lat": float(data[0]["lat"]), "lon": float(data[0]["lon"])}
 
 
+class BatchGeocodeRequest(BaseModel):
+    queries: List[str]
+
+
+@app.post("/api/geocode/batch")
+async def geocode_batch(request: BatchGeocodeRequest):
+    """Geocode up to 50 place queries using Photon (OpenStreetMap-based, no strict rate limit)."""
+    results = []
+    async with httpx.AsyncClient(timeout=6.0) as client:
+        for q in request.queries[:50]:
+            if not q.strip():
+                results.append({"lat": None, "lon": None})
+                continue
+            try:
+                resp = await client.get(
+                    "https://photon.komoot.io/api/",
+                    params={"q": q, "limit": 1, "lang": "en"},
+                    headers={"User-Agent": "AtlasTravelPlanner/1.0"},
+                )
+                features = resp.json().get("features", [])
+                if features:
+                    coords = features[0]["geometry"]["coordinates"]  # [lon, lat]
+                    results.append({"lat": coords[1], "lon": coords[0]})
+                else:
+                    results.append({"lat": None, "lon": None})
+            except Exception:
+                results.append({"lat": None, "lon": None})
+            await asyncio.sleep(0.1)
+    return {"results": results}
+
+
 @app.get("/api/weather")
 async def get_weather(destination: str, start_date: str = "", end_date: str = ""):
     async with httpx.AsyncClient(timeout=12.0) as client:
@@ -286,16 +329,34 @@ async def manual_plan(request: ManualPlanRequest):
         raise HTTPException(status_code=500, detail="TOGETHER_API_KEY not set.")
 
     interests_str = ", ".join(request.interests) if request.interests else "general sightseeing"
+    budget_guide = {
+        "Budget":   "~$50–80/person/day — hostels/budget hotels, street food, public transit, free attractions",
+        "Moderate": "~$150–250/person/day — 3-star hotels, mid-range restaurants, mix of paid and free activities",
+        "Luxury":   "~$400–800+/person/day — 4–5 star hotels, fine dining, private transfers, premium experiences",
+    }.get(request.budget, f"~{request.budget} level spending")
+
     prompt = f"""Please create a comprehensive travel itinerary with the following details:
 
 **Destination:** {request.destination}
 **Travel Dates:** {request.start_date} to {request.end_date}
 **Number of Travelers:** {request.travelers}
-**Budget Level:** {request.budget}
+**Budget Level:** {request.budget} ({budget_guide})
 **Interests:** {interests_str}
 **Special Requests:** {request.special_requests or "None"}
 
-Generate a full day-by-day itinerary with accommodations, activities, dining, transportation, and a budget breakdown."""
+Important: All accommodation, dining, and activity costs MUST match the {request.budget} budget tier defined above. Calculate a realistic grand total based on {request.travelers} traveler(s) and the number of trip days.
+
+Generate a full day-by-day itinerary with accommodations, activities, dining, transportation, and a budget breakdown.
+
+CRITICAL FORMATTING — you must follow this structure exactly:
+## Day 1: [Title]
+## Day 2: [Title]
+## Day 3: [Title]
+(continue for every day)
+
+Under each ## Day header, use bullet points (-) for every activity, meal, and accommodation. Do NOT use bold (**) as day headers. Do NOT skip the ## prefix.
+
+Every bullet point MUST end with a cost in parentheses — a single dollar amount, e.g. ($25), ($0), (free). Never a range. No exceptions."""
 
     messages = [
         {"role": "system", "content": TRAVEL_SYSTEM_PROMPT},
